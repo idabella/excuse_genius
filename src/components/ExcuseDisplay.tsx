@@ -1,8 +1,9 @@
-import { Copy, Heart, Share2, RefreshCw } from 'lucide-react';
+import { Copy, Heart, Share2, RefreshCw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { categoryLabels, categoryColors, ExcuseCategory } from '@/data/excuses';
+import { categoryLabels, ExcuseCategory } from '@/data/excuses';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface ExcuseDisplayProps {
   excuse: string | null;
@@ -14,23 +15,33 @@ interface ExcuseDisplayProps {
   onRegenerate: () => void;
 }
 
+const categoryBadgeStyles: Record<ExcuseCategory, string> = {
+  health: 'bg-health text-health-accent border-health-accent/20',
+  technical: 'bg-technical text-technical-accent border-technical-accent/20',
+  family: 'bg-family text-family-accent border-family-accent/20',
+  miscellaneous: 'bg-misc text-misc-accent border-misc-accent/20',
+};
+
 export function ExcuseDisplay({
   excuse,
   category,
   isFavorite,
-  onCopy,
   onSave,
-  onShare,
   onRegenerate,
 }: ExcuseDisplayProps) {
+  const [copied, setCopied] = useState(false);
+
   if (!excuse) {
     return (
-      <div className="paper-texture rounded-xl p-8 shadow-card border-2 border-dashed border-border text-center">
-        <p className="text-2xl font-handwritten text-muted-foreground">
-          Your excuse will appear here... 📝
+      <div className="card-elevated rounded-2xl p-8 sm:p-10 text-center border-2 border-dashed border-border">
+        <div className="animate-float inline-block mb-4">
+          <span className="text-5xl">📝</span>
+        </div>
+        <p className="text-xl font-display font-semibold text-muted-foreground">
+          Ton excuse apparaîtra ici...
         </p>
         <p className="text-sm text-muted-foreground mt-2">
-          Click the button above to generate one!
+          Clique sur le bouton pour en générer une !
         </p>
       </div>
     );
@@ -39,12 +50,13 @@ export function ExcuseDisplay({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(excuse);
-      toast.success('Copied to clipboard!', {
-        description: 'Now go save yourself 😎',
+      setCopied(true);
+      toast.success('Copié dans le presse-papier ! 📋', {
+        description: 'Maintenant, sauve-toi 😎',
       });
-      onCopy();
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      toast.error('Failed to copy');
+      toast.error('Échec de la copie');
     }
   };
 
@@ -52,12 +64,11 @@ export function ExcuseDisplay({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'My Homework Excuse',
+          title: 'Mon excuse pour les devoirs',
           text: excuse,
         });
-        onShare();
       } catch (err) {
-        // User cancelled or error
+        // User cancelled
       }
     } else {
       handleCopy();
@@ -65,64 +76,80 @@ export function ExcuseDisplay({
   };
 
   return (
-    <div className="animate-fade-in">
-      <div className="paper-texture rounded-xl p-6 sm:p-8 shadow-card border-2 border-border">
+    <div className="animate-pop-in space-y-6">
+      {/* Excuse Card */}
+      <div className="excuse-card rounded-2xl p-6 sm:p-8 shadow-card">
         {category && (
           <span
             className={cn(
-              'inline-block px-3 py-1 rounded-full text-xs font-medium border mb-4',
-              categoryColors[category]
+              'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border mb-4',
+              categoryBadgeStyles[category]
             )}
           >
             {categoryLabels[category]}
           </span>
         )}
-        <p className="text-lg sm:text-xl leading-relaxed text-foreground font-medium">
-          "{excuse}"
-        </p>
+        <blockquote className="relative">
+          <p className="text-lg sm:text-xl leading-relaxed text-foreground font-medium italic">
+            {excuse}
+          </p>
+        </blockquote>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-3 mt-6">
+      {/* Action Buttons */}
+      <div className="flex flex-wrap justify-center gap-3">
         <Button
           variant="outline"
           size="lg"
           onClick={handleCopy}
-          className="gap-2 border-2 hover:bg-card"
+          className={cn(
+            'gap-2 rounded-xl border-2 font-semibold transition-all duration-200 hover-lift',
+            copied && 'bg-accent border-accent-foreground/20 text-accent-foreground'
+          )}
         >
-          <Copy className="h-4 w-4" />
-          Copy
+          {copied ? (
+            <>
+              <Check className="h-4 w-4" />
+              Copié !
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" />
+              Copier
+            </>
+          )}
         </Button>
+
         <Button
           variant="outline"
           size="lg"
           onClick={onSave}
           className={cn(
-            'gap-2 border-2 transition-colors',
-            isFavorite
-              ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-100'
-              : 'hover:bg-card'
+            'gap-2 rounded-xl border-2 font-semibold transition-all duration-200 hover-lift',
+            isFavorite && 'bg-health border-health-accent/30 text-health-accent'
           )}
         >
           <Heart className={cn('h-4 w-4', isFavorite && 'fill-current')} />
-          {isFavorite ? 'Saved!' : 'Save'}
+          {isFavorite ? 'Sauvegardé' : 'Favoris'}
         </Button>
+
         <Button
           variant="outline"
           size="lg"
           onClick={handleShare}
-          className="gap-2 border-2 hover:bg-card"
+          className="gap-2 rounded-xl border-2 font-semibold transition-all duration-200 hover-lift"
         >
           <Share2 className="h-4 w-4" />
-          Share
+          Partager
         </Button>
+
         <Button
-          variant="secondary"
           size="lg"
           onClick={onRegenerate}
-          className="gap-2"
+          className="gap-2 rounded-xl font-semibold btn-primary transition-all duration-200"
         >
           <RefreshCw className="h-4 w-4" />
-          New Excuse
+          Nouvelle excuse
         </Button>
       </div>
     </div>

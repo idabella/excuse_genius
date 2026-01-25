@@ -1,42 +1,83 @@
 import { ExcuseCategory, categoryLabels } from '@/data/excuses';
 import { cn } from '@/lib/utils';
+import { Stethoscope, Laptop, Users, Sparkles } from 'lucide-react';
 
 interface CategorySelectorProps {
   selected: ExcuseCategory | null;
   onSelect: (category: ExcuseCategory | null) => void;
 }
 
-const categoryStyles: Record<ExcuseCategory, string> = {
-  health: 'hover:bg-red-100 hover:border-red-300 data-[selected=true]:bg-red-100 data-[selected=true]:border-red-400 data-[selected=true]:text-red-700',
-  technical: 'hover:bg-blue-100 hover:border-blue-300 data-[selected=true]:bg-blue-100 data-[selected=true]:border-blue-400 data-[selected=true]:text-blue-700',
-  family: 'hover:bg-purple-100 hover:border-purple-300 data-[selected=true]:bg-purple-100 data-[selected=true]:border-purple-400 data-[selected=true]:text-purple-700',
-  miscellaneous: 'hover:bg-green-100 hover:border-green-300 data-[selected=true]:bg-green-100 data-[selected=true]:border-green-400 data-[selected=true]:text-green-700',
+const categoryConfig: Record<ExcuseCategory, { 
+  icon: React.ReactNode;
+  emoji: string;
+  bgClass: string;
+  selectedClass: string;
+}> = {
+  health: {
+    icon: <Stethoscope className="h-4 w-4" />,
+    emoji: '🤒',
+    bgClass: 'hover:bg-health hover:border-health-accent/30',
+    selectedClass: 'bg-health border-health-accent/40 text-health-accent shadow-sm',
+  },
+  technical: {
+    icon: <Laptop className="h-4 w-4" />,
+    emoji: '💻',
+    bgClass: 'hover:bg-technical hover:border-technical-accent/30',
+    selectedClass: 'bg-technical border-technical-accent/40 text-technical-accent shadow-sm',
+  },
+  family: {
+    icon: <Users className="h-4 w-4" />,
+    emoji: '👨‍👩‍👧',
+    bgClass: 'hover:bg-family hover:border-family-accent/30',
+    selectedClass: 'bg-family border-family-accent/40 text-family-accent shadow-sm',
+  },
+  miscellaneous: {
+    icon: <Sparkles className="h-4 w-4" />,
+    emoji: '🎲',
+    bgClass: 'hover:bg-misc hover:border-misc-accent/30',
+    selectedClass: 'bg-misc border-misc-accent/40 text-misc-accent shadow-sm',
+  },
 };
 
 export function CategorySelector({ selected, onSelect }: CategorySelectorProps) {
   const categories: ExcuseCategory[] = ['health', 'technical', 'family', 'miscellaneous'];
 
   return (
-    <div className="space-y-3">
-      <label className="text-sm font-medium text-muted-foreground">
-        Choose a category (or leave empty for random)
-      </label>
-      <div className="flex flex-wrap gap-2">
-        {categories.map((category) => (
-          <button
-            key={category}
-            data-selected={selected === category}
-            onClick={() => onSelect(selected === category ? null : category)}
-            className={cn(
-              'px-4 py-2 rounded-lg border-2 border-border bg-card',
-              'font-medium text-sm transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-              categoryStyles[category]
-            )}
-          >
-            {categoryLabels[category]}
-          </button>
-        ))}
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">📂</span>
+        <h3 className="font-display font-semibold text-foreground text-lg">
+          Catégorie d'excuse
+        </h3>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Choisis une catégorie ou laisse vide pour une excuse aléatoire
+      </p>
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
+        {categories.map((category) => {
+          const config = categoryConfig[category];
+          const isSelected = selected === category;
+          
+          return (
+            <button
+              key={category}
+              onClick={() => onSelect(isSelected ? null : category)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-transparent',
+                'font-medium text-sm transition-all duration-200',
+                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                'bg-card text-muted-foreground',
+                config.bgClass,
+                isSelected && config.selectedClass,
+                isSelected && 'scale-[1.02]'
+              )}
+            >
+              <span className="text-lg">{config.emoji}</span>
+              <span className="hidden sm:inline">{categoryLabels[category].replace(/^[^\s]+\s/, '')}</span>
+              <span className="sm:hidden text-xs">{categoryLabels[category].replace(/^[^\s]+\s/, '')}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
