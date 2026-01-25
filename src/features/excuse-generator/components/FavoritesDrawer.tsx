@@ -8,8 +8,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FavoriteExcuse } from '@/hooks/useFavorites';
-import { categoryLabels } from '@/data/excuses';
+import { FavoriteExcuse } from '../hooks/useFavorites';
+import { categoryLabels } from '../data/excuses';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 

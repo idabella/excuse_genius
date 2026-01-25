@@ -1,6 +1,6 @@
 import { Copy, Heart, Share2, RefreshCw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { categoryLabels, ExcuseCategory } from '@/data/excuses';
+import { categoryLabels, ExcuseCategory } from '../data/excuses';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useState } from 'react';

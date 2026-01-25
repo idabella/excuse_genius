@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { ExcuseCategory } from '@/data/excuses';
+import type { ExcuseCategory } from '../data/excuses';
 
 export interface FavoriteExcuse {
   id: string;
@@ -42,7 +42,7 @@ export function useFavorites() {
       category,
       savedAt: Date.now(),
     };
-    
+
     const newFavorites = [newFavorite, ...favorites];
     saveFavorites(newFavorites);
     return newFavorite;

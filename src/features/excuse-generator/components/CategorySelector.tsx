@@ -1,4 +1,4 @@
-import { ExcuseCategory, categoryLabels } from '@/data/excuses';
+import { ExcuseCategory, categoryLabels } from '../data/excuses';
 import { cn } from '@/lib/utils';
 import { Stethoscope, Laptop, Users, Sparkles } from 'lucide-react';
 
@@ -7,7 +7,7 @@ interface CategorySelectorProps {
   onSelect: (category: ExcuseCategory | null) => void;
 }
 
-const categoryConfig: Record<ExcuseCategory, { 
+const categoryConfig: Record<ExcuseCategory, {
   icon: React.ReactNode;
   emoji: string;
   bgClass: string;
@@ -57,7 +57,7 @@ export function CategorySelector({ selected, onSelect }: CategorySelectorProps) 
         {categories.map((category) => {
           const config = categoryConfig[category];
           const isSelected = selected === category;
-          
+
           return (
             <button
               key={category}
