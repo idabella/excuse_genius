@@ -8,7 +8,7 @@ Excuse Genius is a modern web application that helps you generate creative excus
 
 ## Technologies Used
 
-This project is built with:
+This project is built with :
 
 - React / typscript
 - shadcn-ui
