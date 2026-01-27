@@ -10,9 +10,7 @@ Excuse Genius is a modern web application that helps you generate creative excus
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
+- React / typscript
 - shadcn-ui
 - Tailwind CSS
 
